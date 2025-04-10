@@ -124,12 +124,12 @@ Send a GET request to an endpoint like `/recommendations/<user_id>` to retrieve 
 
 ## Contributing
 
-[Optional: Add information about how others can contribute to the project.]
+Contributions to CARE Lite are welcome! If you have ideas for improvements, bug fixes, or new features, please feel free to:
 
-## License
+1.  Fork the repository.
+2.  Create a new branch for your feature or fix.
+3.  Make your changes and commit them.
+4.  Push your changes to your fork.
+5.  Submit a pull request to the main repository.
 
-[Optional: Add license information here.]
-
-## Acknowledgements
-
-Thank you to the organizers and mentors of the Hack the Future: A Gen AI Sprint Powe
+Please ensure your contributions align with the project's goals and coding standards.
