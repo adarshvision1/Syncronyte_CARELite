@@ -1,0 +1,129 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="mb-4">
+  <h2 class="mb-3">Dashboard Overview</h2>
+  <div class="row g-3">
+    <!-- Metrics cards -->
+    <div class="col-md-3">
+      <div class="card text-white bg-primary metric-card">
+        <div class="card-header">CTR Improvement</div>
+        <div class="card-body">
+          <h5 class="card-title">12%</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-success metric-card">
+        <div class="card-header">Active Users</div>
+        <div class="card-body">
+          <h5 class="card-title">256</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-info metric-card">
+        <div class="card-header">Total Recommendations</div>
+        <div class="card-body">
+          <h5 class="card-title">1024</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-warning metric-card">
+        <div class="card-header">Model Accuracy</div>
+        <div class="card-body">
+          <h5 class="card-title">--</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chart and action buttons -->
+<div class="row">
+  <div class="col-md-8">
+    <div class="card mb-4">
+      <div class="card-header">Performance Chart</div>
+      <div class="card-body">
+        <canvas id="performanceChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card mb-4">
+      <div class="card-header">Quick Actions</div>
+      <div class="card-body">
+        <form method="post" action="/dashboard">
+          <div class="mb-3">
+            <label for="rule_override" class="form-label">Rule Override (JSON):</label>
+            <textarea id="rule_override" name="rule_override" class="form-control" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary w-100 mb-2">Update Rules</button>
+        </form>
+        <button id="trainModelBtn" class="btn btn-success w-100 mb-2">Train Feedback Model</button>
+        <div class="input-group">
+          <input id="dwellInput" type="number" step="0.1" class="form-control" placeholder="Dwell Time">
+          <button id="predictBtn" class="btn btn-info">Predict</button>
+        </div>
+        <div id="predictResult" class="mt-2 text-center"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if message %}
+<div class="alert alert-info">{{ message }}</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Example: Simple bar chart for demonstration
+const ctx = document.getElementById('performanceChart').getContext('2d');
+const performanceChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['CTR', 'Active Users', 'Recommendations'],
+        datasets: [{
+            label: 'Performance',
+            data: [12, 256, 1024],
+            backgroundColor: [
+                'rgba(54, 162, 235, 0.7)',
+                'rgba(75, 192, 192, 0.7)',
+                'rgba(255, 206, 86, 0.7)'
+            ],
+            borderColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(255, 206, 86, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: { 
+            y: { beginAtZero: true }
+        }
+    }
+});
+
+// Quick actions using fetch API
+document.getElementById('trainModelBtn').addEventListener('click', () => {
+  fetch('/train-feedback-model', {method: 'POST'})
+    .then(response => response.json())
+    .then(data => alert(data.msg))
+    .catch(err => console.error(err));
+});
+
+document.getElementById('predictBtn').addEventListener('click', () => {
+  let dwellTime = document.getElementById('dwellInput').value;
+  fetch(`/predict-feedback?dwell_time=${dwellTime}`)
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('predictResult').textContent = 
+         `Prediction: ${data.probability}`;
+    })
+    .catch(err => console.error(err));
+});
+</script>
+{% endblock %}
